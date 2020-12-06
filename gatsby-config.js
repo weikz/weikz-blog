@@ -18,8 +18,8 @@ module.exports = {
     {
       resolve: 'gatsby-source-filesystem',
       options: {
-        path: `${__dirname}/content`,
-        name: 'pages'
+        path: `${__dirname}/static`,
+        name: 'assets'
       }
     },
     {
@@ -32,15 +32,15 @@ module.exports = {
     {
       resolve: 'gatsby-source-filesystem',
       options: {
-        name: 'css',
-        path: `${__dirname}/static/css`
+        path: `${__dirname}/content`,
+        name: 'pages'
       }
     },
     {
       resolve: 'gatsby-source-filesystem',
       options: {
-        name: 'assets',
-        path: `${__dirname}/static`
+        name: 'css',
+        path: `${__dirname}/static/css`
       }
     },
     {
@@ -59,7 +59,8 @@ module.exports = {
         `,
         feeds: [{
           serialize: ({ query: { site, allMarkdownRemark } }) => (
-            allMarkdownRemark.edges.map((edge) => Object.assign({}, edge.node.frontmatter, {
+            allMarkdownRemark.edges.map((edge) => ({
+              ...edge.node.frontmatter,
               description: edge.node.frontmatter.description,
               date: edge.node.frontmatter.date,
               url: site.siteMetadata.site_url + edge.node.fields.slug,
@@ -112,8 +113,7 @@ module.exports = {
             resolve: 'gatsby-remark-images',
             options: {
               maxWidth: 960,
-              withWebp: true,
-              ignoreFileExtensions: [],
+              withWebp: true
             }
           },
           {
@@ -134,7 +134,7 @@ module.exports = {
     {
       resolve: 'gatsby-plugin-netlify-cms',
       options: {
-        modulePath: `${__dirname}/src/cms/index.js`,
+        modulePath: `${__dirname}/src/cms/index.js`
       }
     },
     {
@@ -142,9 +142,9 @@ module.exports = {
       options: {
         trackingIds: [siteConfig.googleAnalyticsId],
         pluginConfig: {
-          head: true,
-        },
-      },
+          head: true
+        }
+      }
     },
     {
       resolve: 'gatsby-plugin-sitemap',
@@ -197,11 +197,18 @@ module.exports = {
       options: {
         postCssPlugins: [...postCssPlugins],
         cssLoaderOptions: {
-          camelCase: false,
+          camelCase: false
         }
       }
     },
+    {
+      resolve: '@sentry/gatsby',
+      options: {
+        dsn: process.env.SENTRY_DSN,
+        tracesSampleRate: 1
+      }
+    },
     'gatsby-plugin-flow',
-    'gatsby-plugin-optimize-svgs',
+    'gatsby-plugin-optimize-svgs'
   ]
 };
